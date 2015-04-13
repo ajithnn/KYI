@@ -33,17 +33,28 @@ angular.module('starter.controllers', [])
                 showDelay: 0
             });
             navigator.camera.getPicture($scope.Upload, $scope.onFail, {
-                quality: 70,
+                quality: 40,
                 cameraDirection: navigator.camera.Direction.FRONT,
                 destinationType: navigator.camera.DestinationType.FILE_URI
             });
         }
-        $scope.alertDismissed = function() {
-            $state.go('app.view');
+        $scope.dummy = function() {}
+        $scope.alertDismissed = function(data) {
+            if (data == "done") {
+                $state.go('app.view');
+            } else if (data == "Fail") {
+                navigator.notification.alert(
+                    'There was an error in processing the image, Pls try again.', // message
+                    $scope.dummy, // callback
+                    'Try Again', // title
+                    'Done' // buttonName
+                );
+            }
         }
         $scope.Upload = function(fileURL) {
             sock.setupSocketEvents();
             var win = function(r) {
+                $scope.alertDismissed(r);
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
@@ -54,8 +65,8 @@ angular.module('starter.controllers', [])
                 console.log("upload error source " + error.source);
                 console.log("upload error target " + error.target);
                 navigator.notification.alert(
-                    'Connect to the right network and try again', // message
-                    alertDismissed, // callback
+                    'Check network connetin and try again.', // message
+                    $scope.dummy, // callback
                     'Try Again', // title
                     'Done' // buttonName
                 );
@@ -83,11 +94,21 @@ angular.module('starter.controllers', [])
     }
 ])
 
-.controller('ViewCtrl', function($scope, $stateParams,$ionicLoading) {
+.controller('ViewCtrl',['$scope','$stateParams','$ionicLoading','socketService',function($scope, $stateParams, $ionicLoading,sock) {
     $scope.$emit("InView");
-    $scope.imgSrc = "";
-    $scope.$on('ImageMod', function(event,data) {
-        $scope.imgSrc = data;
+    $scope.imgSrc = sock.ImgSrc;
+    $scope.$on('ImageMod', function(event, data) {
+        $scope.imgSrc = sock.ImgSrc;
+        $ionicLoading.hide();
+        $scope.$apply();
+    })
+    $scope.$on('Error', function(event, data) {
+        navigator.notification.alert(
+            data, // message
+            $scope.dummy, // callback
+            'Try Again', // title
+            'Done' // buttonName
+        );
         $ionicLoading.hide();
     })
-});
+}]);

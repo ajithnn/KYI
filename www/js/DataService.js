@@ -5,6 +5,7 @@ angular.module('starter.services', [])
         this.socket;
         this.server = "http://infinite-dusk-7803.herokuapp.com";
         this.Id;
+        this.ImgSrc = "";
         this.openSocket = function() {
             this.socket = io(this.server);
             var that = this;
@@ -15,7 +16,11 @@ angular.module('starter.services', [])
         this.setupSocketEvents = function() {
             var that = this;
             this.socket.on('ImageModified', function(data) {
-                $rootScope.$broadcast("ImageMod",that.server + data);
+                that.ImgSrc = that.server + data;
+                $rootScope.$broadcast("ImageMod", that.server + data);
+            });
+            this.socket.on('Error', function(data) {
+                $rootScope.$broadcast("Error",data);
             });
         }
     }
