@@ -33,7 +33,7 @@ angular.module('starter.controllers', [])
                 showDelay: 0
             });
             navigator.camera.getPicture($scope.Upload, $scope.onFail, {
-                quality: 40,
+                quality: 30,
                 cameraDirection: navigator.camera.Direction.FRONT,
                 destinationType: navigator.camera.DestinationType.FILE_URI
             });
