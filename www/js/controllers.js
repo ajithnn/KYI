@@ -35,7 +35,9 @@ angular.module('starter.controllers', [])
             navigator.camera.getPicture($scope.Upload, $scope.onFail, {
                 quality: 30,
                 cameraDirection: navigator.camera.Direction.FRONT,
-                destinationType: navigator.camera.DestinationType.FILE_URI
+                destinationType: navigator.camera.DestinationType.FILE_URI,
+                correctOrientation:false,
+                allowEdit:true
             });
         }
         $scope.dummy = function() {}
@@ -49,6 +51,7 @@ angular.module('starter.controllers', [])
                     'Try Again', // title
                     'Done' // buttonName
                 );
+                $ionicLoading.hide();
             }
         }
         $scope.Upload = function(fileURL) {
@@ -58,10 +61,11 @@ angular.module('starter.controllers', [])
                 console.log("Code = " + r.responseCode);
                 console.log("Response = " + r.response);
                 console.log("Sent = " + r.bytesSent);
-                $http.get(sock.server + "/runpy?id=" + sock.Id).success($scope.alertDismissed).error(function() {});
+                $http.get(sock.server + "/runpy?id=" + sock.Id).success($scope.alertDismissed).error(function() {
+                    $ionicLoading.hide();
+                });
             }
             var fail = function(error) {
-                alert("An error has occurred: Code = " + error.code);
                 console.log("upload error source " + error.source);
                 console.log("upload error target " + error.target);
                 navigator.notification.alert(
@@ -70,6 +74,7 @@ angular.module('starter.controllers', [])
                     'Try Again', // title
                     'Done' // buttonName
                 );
+                $ionicLoading.hide();
             }
 
             var options = new FileUploadOptions();
@@ -90,6 +95,7 @@ angular.module('starter.controllers', [])
                 'Try Again', // title
                 'Done' // buttonName
             );
+            $ionicLoading.hide();
         }
     }
 ])
@@ -99,8 +105,8 @@ angular.module('starter.controllers', [])
     $scope.imgSrc = sock.ImgSrc;
     $scope.$on('ImageMod', function(event, data) {
         $scope.imgSrc = sock.ImgSrc;
-        $ionicLoading.hide();
         $scope.$apply();
+        $ionicLoading.hide();
     })
     $scope.$on('Error', function(event, data) {
         navigator.notification.alert(

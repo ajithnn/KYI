@@ -3,7 +3,7 @@ angular.module('starter.services', [])
 .service('socketService', ['$rootScope',
     function($rootScope) {
         this.socket;
-        this.server = "http://infinite-dusk-7803.herokuapp.com";
+        this.server = "https://infinite-dusk-7803.herokuapp.com";
         this.Id;
         this.ImgSrc = "";
         this.openSocket = function() {
